@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica de Usabilidad - Gestión de Citas</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #0066cc;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #0066cc;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005bb5;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+        }
+        .success-message {
+            color: green;
+            font-size: 1em;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .action-buttons button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Página de Práctica - Gestión de Citas</h1>
+    </header>
+    <main class="container">
+        <h2>Solicitar una Cita</h2>
+        <form id="appointmentForm">
+            <div>
+                <label for="name">Nombre Completo:</label>
+                <input type="text" id="name" name="name" placeholder="Ingrese su nombre completo">
+                <span class="error-message" id="nameError"></span>
+            </div>
+            <div>
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" name="email" placeholder="Ingrese su correo electrónico">
+                <span class="error-message" id="emailError"></span>
+            </div>
+            <div>
+                <label for="appointmentType">Tipo de Cita:</label>
+                <select id="appointmentType" name="appointmentType">
+                    <option value="">Seleccione una opción</option>
+                    <option value="general">Consulta General</option>
+                    <option value="especialista">Cita con Especialista</option>
+                </select>
+                <span class="error-message" id="typeError"></span>
+            </div>
+            <div>
+                <label for="phone">Teléfono (opcional):</label>
+                <input type="text" id="phone" name="phone" placeholder="Ingrese su teléfono">
+            </div>
+            <button type="submit">Enviar Solicitud</button>
+        </form>
+        <p class="success-message" id="successMessage"></p>
+    </main>
+    <section class="container table-container">
+        <h2>Revisión de Solicitudes de Cita</h2>
+        <table id="appointmentsTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Correo Electrónico</th>
+                    <th>Tipo de Cita</th>
+                    <th>Teléfono</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Juan Pérez</td>
+                    <td>juan@correo.com</td>
+                    <td>Consulta General</td>
+                    <td>123456789</td>
+                    <td class="action-buttons">
+                        <button onclick="editAppointment(this)">Editar</button>
+                        <button onclick="deleteAppointment(this)">Eliminar</button>
+                    </td>
+                </tr>
+                <!-- Más filas de ejemplo -->
+            </tbody>
+        </table>
+    </section>
+    <script>
+        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Limpiar mensajes de error
+            document.getElementById('nameError').textContent = '';
+            document.getElementById('emailError').textContent = '';
+            document.getElementById('typeError').textContent = '';
+            document.getElementById('successMessage').textContent = '';
+
+            // Validar campos del formulario
+            let hasError = false;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const appointmentType = document.getElementById('appointmentType').value;
+
+            if (name === '') {
+                document.getElementById('nameError').textContent = 'Por favor, ingrese su nombre completo.';
+                hasError = true;
+            }
+
+            if (email === '') {
+                document.getElementById('emailError').textContent = 'Por favor, ingrese su correo electrónico.';
+                hasError = true;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Por favor, ingrese un correo electrónico válido.';
+                hasError = true;
+            }
+
+            if (appointmentType === '') {
+                document.getElementById('typeError').textContent = 'Por favor, seleccione un tipo de cita.';
+                hasError = true;
+            }
+
+            if (!hasError) {
+                document.getElementById('successMessage').textContent = '¡Solicitud de cita enviada correctamente!';
+            }
+        });
+
+        function editAppointment(button) {
+            const row = button.parentElement.parentElement;
+            const name = row.cells[0].textContent;
+            const email = row.cells[1].textContent;
+            const type = row.cells[2].textContent;
+            const phone = row.cells[3].textContent;
+
+            document.getElementById('name').value = name;
+            document.getElementById('email').value = email;
+            document.getElementById('appointmentType').value = type.toLowerCase();
+            document.getElementById('phone').value = phone;
+        }
+
+        function deleteAppointment(button) {
+            if (confirm('¿Está seguro de que desea eliminar esta solicitud?')) {
+                const row = button.parentElement.parentElement;
+                row.parentElement.removeChild(row);
+                alert('Solicitud eliminada correctamente.');
+            }
+        }
+    </script>
+</body>
+</html>
